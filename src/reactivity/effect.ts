@@ -6,7 +6,8 @@ class ReactiveEffect {
 
   run() {
     activeEffect = this
-    this._fn()
+    // 执行fn 并且将返回值抛出去
+    return this._fn()
   }
 }
 let activeEffect: any = null
@@ -38,4 +39,6 @@ export const trigger = (target, key) => {
 export const effect = (fn) => {
   const _effect = new ReactiveEffect(fn)
   _effect.run()
+  //绑定this,以防不测
+  return _effect.run.bind(_effect, fn)
 }

@@ -12,4 +12,16 @@ describe('effect', () => {
     data.num += 1
     expect(nextNum).toBe(3)
   })
+
+  it('it should return runner', () => {
+    let num = 0
+    const runner: any = effect(() => {
+      num++
+      return num
+    })
+    expect(num).toBe(1)
+    runner()
+    expect(num).toBe(2)
+    expect(runner()).toBe(3)
+  })
 })
