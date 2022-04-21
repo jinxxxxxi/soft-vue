@@ -1,4 +1,9 @@
 import { extend } from '../shared/index'
+
+let activeEffect: any = null
+let targetMaps = new Map()
+let shouldTrack = false
+
 class ReactiveEffect {
   private _fn: any
   private active = true
@@ -11,9 +16,17 @@ class ReactiveEffect {
   }
 
   run() {
+    if (!this.active) {
+        // 执行fn 并且将返回值抛出去
+      return this._fn()
+    }
+    // 应该收集
+    shouldTrack = true;
     activeEffect = this
-    // 执行fn 并且将返回值抛出去
-    return this._fn()
+    let r = this._fn()
+     // 重置
+    shouldTrack = false;
+    return r
   }
 
   stop() {
@@ -26,15 +39,15 @@ class ReactiveEffect {
     }
   }
 }
-let activeEffect: any = null
 function cleanupEffect(effect) {
   // 将当前传入的effect依赖， 删除
   effect.deps.forEach((dep) => {
     dep.delete(effect)
   })
+  effect.deps.length = 0
 }
-let targetMaps = new Map()
 export const track = (target, key) => {
+  if(!isTracking()) return
   // target => key => dep
   // 先取到target 再取key
   let depMaps = targetMaps.get(target) // 该target对应的所有依赖
@@ -47,9 +60,14 @@ export const track = (target, key) => {
     dep = new Set() // 依赖不能重复
     depMaps.set(key, dep)
   }
-  if (!activeEffect) return
+ 
   dep.add(activeEffect)
   activeEffect.deps.push(dep)
+}
+
+
+function isTracking() {
+  return  shouldTrack&&activeEffect !== undefined
 }
 export const trigger = (target, key) => {
   const depsMap = targetMaps.get(target)
