@@ -1,25 +1,29 @@
 import { track, trigger } from './effect'
 import { ReactiveFlags, reactive, readonly } from './reactive'
-import {isObject} from '../shared/index'
+import { isObject, extend } from '../shared/index'
 
 // 性能优化，避免每次get/ser都执行一遍，先缓存一下；
 const get = createGetter()
 const set = createSetter()
 const readonlyGet = createGetter(true)
+const shallowReadonlyGet = createGetter(true, true)
 
-function createGetter(isReadonly = false) {
+function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key) {
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
     } else if (key === ReactiveFlags.IS_READONLY) {
       return isReadonly
     }
-    console.log('zj target',target,key);
-    
+
     const res = Reflect.get(target, key)
+    // 如果是浅层的
+    if (shallow) {
+      return res
+    }
     // 如果当前是对象 就递归判断 ；
     if (isObject(res)) {
-      return  isReadonly? readonly(res): reactive(res)
+      return isReadonly ? readonly(res) : reactive(res)
     }
     // 非对象才进行依赖收集
     if (!isReadonly) {
@@ -53,3 +57,7 @@ export const readonlyHandlers = {
     return true
   }
 }
+
+export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
+  get: shallowReadonlyGet
+})
