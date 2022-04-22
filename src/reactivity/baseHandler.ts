@@ -1,5 +1,6 @@
 import { track, trigger } from './effect'
-import { ReactiveFlags } from './reactive'
+import { ReactiveFlags, reactive, readonly } from './reactive'
+import {isObject} from '../shared/index'
 
 // 性能优化，避免每次get/ser都执行一遍，先缓存一下；
 const get = createGetter()
@@ -13,7 +14,14 @@ function createGetter(isReadonly = false) {
     } else if (key === ReactiveFlags.IS_READONLY) {
       return isReadonly
     }
+    console.log('zj target',target,key);
+    
     const res = Reflect.get(target, key)
+    // 如果当前是对象 就递归判断 ；
+    if (isObject(res)) {
+      return  isReadonly? readonly(res): reactive(res)
+    }
+    // 非对象才进行依赖收集
     if (!isReadonly) {
       track(target, key)
     }
