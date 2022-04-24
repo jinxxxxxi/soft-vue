@@ -5,6 +5,7 @@ class RefImpl {
   private _value
   private dep
   private _raw
+  public __v_isRef = true
   // 如果value是对象， 需要转化成reactive
   constructor(value) {
     this._value = convert(value)
@@ -41,4 +42,11 @@ export const ref = (value) => {
   // IMPT:这就是为什么要挂载一个value
 
   return new RefImpl(value)
+}
+
+export const isRef = (ref) => {
+  return !!ref.__v_isRef
+}
+export const unRef = (ref) => {
+  return isRef(ref) ? ref.value : ref
 }
