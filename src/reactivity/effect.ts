@@ -17,15 +17,15 @@ class ReactiveEffect {
 
   run() {
     if (!this.active) {
-        // 执行fn 并且将返回值抛出去
+      // 执行fn 并且将返回值抛出去
       return this._fn()
     }
     // 应该收集
-    shouldTrack = true;
+    shouldTrack = true
     activeEffect = this
     let r = this._fn()
-     // 重置
-    shouldTrack = false;
+    // 重置
+    shouldTrack = false
     return r
   }
 
@@ -47,7 +47,7 @@ function cleanupEffect(effect) {
   effect.deps.length = 0
 }
 export const track = (target, key) => {
-  if(!isTracking()) return
+  if (!isTracking()) return
   // target => key => dep
   // 先取到target 再取key
   let depMaps = targetMaps.get(target) // 该target对应的所有依赖
@@ -60,18 +60,15 @@ export const track = (target, key) => {
     dep = new Set() // 依赖不能重复
     depMaps.set(key, dep)
   }
- 
-  dep.add(activeEffect)
-  activeEffect.deps.push(dep)
+  trackEffects(dep)
 }
 
-
-function isTracking() {
-  return  shouldTrack&&activeEffect !== undefined
+export function isTracking() {
+  // 用于判断，activeEffect
+  return shouldTrack && activeEffect !== undefined
 }
-export const trigger = (target, key) => {
-  const depsMap = targetMaps.get(target)
-  const dep = depsMap.get(key)
+
+export const triggerEffects = (dep) => {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler()
@@ -79,6 +76,19 @@ export const trigger = (target, key) => {
       effect.run()
     }
   }
+}
+
+export function trackEffects(dep) {
+  // 优化 => 看看 dep 之前有没有添加过，添加过的话 那么就不添加了
+  if (dep.has(activeEffect)) return
+
+  dep.add(activeEffect)
+  activeEffect.deps.push(dep)
+}
+export const trigger = (target, key) => {
+  const depsMap = targetMaps.get(target)
+  const dep = depsMap.get(key)
+  triggerEffects(dep)
 }
 
 type effectOptions = {
