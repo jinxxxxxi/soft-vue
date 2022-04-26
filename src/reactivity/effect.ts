@@ -4,7 +4,7 @@ let activeEffect: any = null
 let targetMaps = new Map()
 let shouldTrack = false
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any
   private active = true
   public deps: any[] = [] // 该effect对应的所有依赖； 每个值都是  target[key] 对应的所有依赖（Set类型）;
