@@ -1,45 +1,45 @@
 export function createComponentInstance(vnode) {
   const component = {
     vnode,
-    type: vnode.type,
-  };
+    type: vnode.type
+  }
 
-  return component;
+  return component
 }
 
 export function setupComponent(instance) {
   // TODO
   // initProps()
   // initSlots()
-  setupStatefulComponent(instance);
+  setupStatefulComponent(instance)
 }
 
 function setupStatefulComponent(instance: any) {
-  const Component = instance.type;
+  const Component = instance.type
 
-  const { setup } = Component;
+  const { setup } = Component
 
   if (setup) {
-    const setupResult = setup();
+    const setupResult = setup()
 
-    handleSetupResult(instance, setupResult);
+    handleSetupResult(instance, setupResult)
   }
 }
 
 function handleSetupResult(instance, setupResult: any) {
   // function Object
   // TODO function
-  if (typeof setupResult === "object") {
-    instance.setupState = setupResult;
+  if (typeof setupResult === 'object') {
+    instance.setupState = setupResult
   }
 
-  finishComponentSetup(instance);
+  finishComponentSetup(instance)
 }
 
 function finishComponentSetup(instance: any) {
-  const Component = instance.type;
+  const Component = instance.type
 
-  if (!Component.render) {
-    instance.render = Component.render;
+  if (Component.render) {
+    instance.render = Component.render
   }
 }
