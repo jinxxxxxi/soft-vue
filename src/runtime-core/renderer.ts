@@ -34,10 +34,17 @@ function mountElement(vnode: any, container: any) {
   } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
     mountChildren(children, el)
   }
+  //判断事件名 on+[事件]
+  const isOn = (key: string) => /^on[A-Z]/.test(key)
   //hanle props
   for (let key in props) {
     const val = props[key]
-    el.setAttribute(key, val)
+    if (isOn(key)) {
+      const event = key.slice(2).toLocaleLowerCase()
+      el.addEventListener(event, val)
+    } else {
+      el.setAttribute(key, val)
+    }
   }
   container.appendChild(el)
 }
