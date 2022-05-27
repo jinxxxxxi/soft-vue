@@ -9,12 +9,19 @@ export const App = {
       'div',
       {
         class: ['red', 'green'],
-        id: 'fun',
-        onClick: () => {
-          console.log('zhangjing')
-        }
+        id: 'fun'
       },
-      [h('div', {}, 'hi,' + this.msg), h(Foo, { count: 1, class: ['red'] })]
+      [
+        h('div', {}, 'hi,' + this.msg),
+        h(Foo, {
+          onAdd(a, b) {
+            console.log('onAdd', a, b)
+          },
+          onAddFoo() {
+            console.log('onAddFoo')
+          }
+        })
+      ]
       // [
       //   h('div', { class: 'red' }, '111'),
       //   h('div', { class: 'green' }, [h('b', {}, '333')])
