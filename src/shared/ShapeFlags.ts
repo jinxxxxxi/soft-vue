@@ -7,3 +7,10 @@ export const enum ShapeFlags {
   TEXT_CHILDREN = 1 << 2, //0100
   ARRAY_CHILDREN = 1 << 3 // 1000
 }
+
+export const type = {
+  ELEMENT: true,
+  STATEFUL_COMPONENT: true,
+  TEXT_CHILDREN: true,
+  ARRAY_CHILDREN: true
+}

@@ -1,4 +1,5 @@
 import { h } from '../../lib/soft-vue.esm.js'
+import { Foo } from './Foo.js'
 window.self = null
 export const App = {
   render() {
@@ -13,7 +14,7 @@ export const App = {
           console.log('zhangjing')
         }
       },
-      'hi, ' + this.msg
+      [h('div', {}, 'hi,' + this.msg), h(Foo, { count: 1, class: ['red'] })]
       // [
       //   h('div', { class: 'red' }, '111'),
       //   h('div', { class: 'green' }, [h('b', {}, '333')])
