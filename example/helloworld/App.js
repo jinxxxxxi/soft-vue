@@ -1,37 +1,30 @@
 import { h } from '../../lib/soft-vue.esm.js'
 import { Foo } from './Foo.js'
-window.self = null
+
 export const App = {
+  name: 'App',
   render() {
-    window.self = this
-    // ui
-    return h(
-      'div',
+    const app = h('div', {}, 'App')
+    // object key
+    const foo = h(
+      Foo,
+      {},
       {
-        class: ['red', 'green'],
-        id: 'fun'
-      },
-      [
-        h('div', {}, 'hi,' + this.msg),
-        h(Foo, {
-          onAdd(a, b) {
-            console.log('onAdd', a, b)
-          },
-          onAddFoo() {
-            console.log('onAddFoo')
-          }
-        })
-      ]
-      // [
-      //   h('div', { class: 'red' }, '111'),
-      //   h('div', { class: 'green' }, [h('b', {}, '333')])
-      // ]
+        header: ({ age }) => {
+          return [h('p', {}, 'header' + age), h('p', {}, '45656')]
+        },
+        footer: () => h('p', {}, 'footer')
+      }
+      // h('p', {}, '123')
     )
+    return h('div', {}, [app, foo])
+
+    // 数组 vnode
+    // const foo = h(Foo, {}, h("p", {}, "123"));
+    // return h("div", {}, [ foo]);
   },
 
   setup() {
-    return {
-      msg: 'soft-vue'
-    }
+    return {}
   }
 }

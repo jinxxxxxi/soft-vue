@@ -1,27 +1,34 @@
-import { h } from '../../lib/soft-vue.esm.js'
+import { h, renderSlots } from '../../lib/soft-vue.esm.js'
 
 export const Foo = {
-  setup(props, { emit }) {
-    const emitAdd = () => {
-      console.log('emit add')
-      emit('add', 1, 2)
-      emit('add-foo')
-    }
-
-    return {
-      emitAdd
-    }
+  setup() {
+    return {}
   },
   render() {
-    const btn = h(
-      'button',
-      {
-        onClick: this.emitAdd
-      },
-      'emitAdd'
-    )
-
     const foo = h('p', {}, 'foo')
-    return h('div', {}, [foo, btn])
+
+    // Foo .vnode. children
+    // console.log(this.$slots);
+    // children -> vnode
+    //
+    // renderSlots
+    // 具名插槽
+    // 1. 获取到要渲染的元素 1
+    // 2. 要获取到渲染的位置
+    // 作用域插槽
+    const age = 18
+    // return h("div", {}, [
+    //   renderSlots(this.$slots, "header", {
+    //     age,
+    //   }),
+    //   foo,
+    //   renderSlots(this.$slots, "footer"),
+    // ]);
+
+    return h('div', {}, [
+      renderSlots(this.$slots, 'header', { age }),
+      foo,
+      renderSlots(this.$slots, 'footer')
+    ])
   }
 }
