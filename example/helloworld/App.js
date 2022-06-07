@@ -1,4 +1,4 @@
-import { h } from '../../lib/soft-vue.esm.js'
+import { h, createTextVnode } from '../../lib/soft-vue.esm.js'
 import { Foo } from './Foo.js'
 
 export const App = {
@@ -11,7 +11,7 @@ export const App = {
       {},
       {
         header: ({ age }) => {
-          return [h('p', {}, 'header' + age), h('p', {}, '45656')]
+          return [h('p', {}, 'header' + age), createTextVnode('你好')]
         },
         footer: () => h('p', {}, 'footer')
       }

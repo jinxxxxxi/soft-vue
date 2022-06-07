@@ -1,17 +1,28 @@
-import { isObject } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
 import { ShapeFlags } from '../shared/ShapeFlags'
+import { Fragment, Text } from './vnode'
 
 export function render(vnode, container) {
   patch(vnode, container)
 }
 
 function patch(vnode, container) {
-  const { shapeFlag } = vnode
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    processElement(vnode, container)
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    processComponent(vnode, container)
+  const { shapeFlag, type } = vnode
+
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container)
+      break
+    case Text:
+      processText(vnode, container)
+      break
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        processElement(vnode, container)
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        processComponent(vnode, container)
+      }
+      break
   }
 }
 function processElement(vnode: any, container: any) {
@@ -32,7 +43,7 @@ function mountElement(vnode: any, container: any) {
     // 字符串说明是文本节点
     el.textContent = vnode.children
   } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-    mountChildren(children, el)
+    mountChildren(vnode, el)
   }
   //判断事件名 on+[事件]
   const isOn = (key: string) => /^on[A-Z]/.test(key)
@@ -49,8 +60,10 @@ function mountElement(vnode: any, container: any) {
   container.appendChild(el)
 }
 
-function mountChildren(children, el) {
-  children.forEach((e) => {
+function mountChildren(vnode, el) {
+  vnode.children.forEach((e) => {
+    console.log('child', e)
+
     patch(e, el)
   })
 }
@@ -73,4 +86,12 @@ function setupRenderEffect(instance: any, vnode: any, container) {
   patch(subTree, container)
   // 把root元素虚拟节点上的el 赋值给组件的el（这样才能在组件里面用this.$el来获取）
   vnode.el = subTree.el
+}
+function processFragment(vnode: any, container: any) {
+  mountChildren(vnode, container)
+}
+function processText(vnode: any, container: any) {
+  const { children } = vnode
+  const text = (vnode.el = document.createTextNode(children))
+  container.append(text)
 }
