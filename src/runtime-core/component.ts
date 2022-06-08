@@ -4,7 +4,7 @@ import { shallowReadonly } from '../reactivity/reactive'
 import { emit } from './componentEmit'
 import { initSlots } from './componentSlots'
 
-export function createComponentInstance(vnode) {
+export function createComponentInstance(vnode, parent) {
   const component = {
     vnode,
     type: vnode.type,
@@ -12,8 +12,13 @@ export function createComponentInstance(vnode) {
     props: {},
     name: vnode.type.name,
     slots: {},
+    // 这块就是原型链的原理，每个都指向自己的父元素，就能一直向上查找了
+    provides: parent ? parent.provides : {},
+    parent,
     emit: () => {}
   }
+
+  console.log('zj ', vnode.type.name, component)
 
   component.emit = (emit as any).bind(null, component)
 
