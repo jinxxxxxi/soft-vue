@@ -1,7 +1,11 @@
-import { h, renderSlots } from '../../lib/soft-vue.esm.js'
+import { h, renderSlots, getCurrentInstance } from '../../lib/soft-vue.esm.js'
 
 export const Foo = {
+  name: 'Foo',
   setup() {
+    const instance = getCurrentInstance()
+    console.log('instance', instance)
+
     return {}
   },
   render() {

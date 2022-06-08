@@ -1,4 +1,8 @@
-import { h, createTextVnode } from '../../lib/soft-vue.esm.js'
+import {
+  h,
+  createTextVnode,
+  getCurrentInstance
+} from '../../lib/soft-vue.esm.js'
 import { Foo } from './Foo.js'
 
 export const App = {
@@ -17,14 +21,15 @@ export const App = {
       }
       // h('p', {}, '123')
     )
-    return h('div', {}, [app, foo])
+    // return h('div', {}, [createTextVnode('aaa'), 'bbb'])
 
     // 数组 vnode
-    // const foo = h(Foo, {}, h("p", {}, "123"));
-    // return h("div", {}, [ foo]);
+    return h('div', {}, [foo])
   },
 
   setup() {
+    const instance = getCurrentInstance()
+    console.log('instance', instance)
     return {}
   }
 }

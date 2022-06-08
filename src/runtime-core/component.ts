@@ -14,6 +14,7 @@ export function createComponentInstance(vnode) {
     slots: {},
     emit: () => {}
   }
+
   component.emit = (emit as any).bind(null, component)
 
   return component
@@ -33,9 +34,11 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component
 
   if (setup) {
+    setCurrentInstance(instance)
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit
     })
+    setCurrentInstance(null)
 
     handleSetupResult(instance, setupResult)
   }
@@ -51,10 +54,18 @@ function handleSetupResult(instance, setupResult: any) {
   finishComponentSetup(instance)
 }
 
+let currentInstance = null
 function finishComponentSetup(instance: any) {
   const Component = instance.type
 
   if (Component.render) {
     instance.render = Component.render
   }
+}
+function setCurrentInstance(instance) {
+  currentInstance = instance
+}
+
+export function getCurrentInstance() {
+  return currentInstance
 }
