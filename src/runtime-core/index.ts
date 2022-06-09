@@ -1,6 +1,6 @@
 export { createTextVnode } from './vnode'
-export { createApp } from './createApp'
 export { h } from './h'
+export { createRenderer } from './renderer'
 export { renderSlots } from './helpers/renderSlots'
 export { getCurrentInstance } from './component'
 export { provide, inject } from './apiInject'
