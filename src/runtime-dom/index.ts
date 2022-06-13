@@ -16,8 +16,6 @@ function patchProp(el, key, val) {
 }
 
 function insert(el, parent) {
-  console.log('zj insert', parent)
-
   parent.appendChild(el)
 }
 
@@ -28,3 +26,4 @@ export function createApp(...args) {
 }
 
 export * from '../runtime-core'
+export * from '../reactivity'

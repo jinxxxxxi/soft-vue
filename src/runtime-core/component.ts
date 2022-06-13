@@ -3,6 +3,7 @@ import { PublicInstanceProxy } from './componentPublicInstance'
 import { shallowReadonly } from '../reactivity/reactive'
 import { emit } from './componentEmit'
 import { initSlots } from './componentSlots'
+import { proxyRefs } from '../reactivity'
 
 export function createComponentInstance(vnode, parent) {
   const component = {
@@ -17,9 +18,6 @@ export function createComponentInstance(vnode, parent) {
     parent,
     emit: () => {}
   }
-
-  console.log('zj ', vnode.type.name, component)
-
   component.emit = (emit as any).bind(null, component)
 
   return component
@@ -53,7 +51,7 @@ function handleSetupResult(instance, setupResult: any) {
   // function Object
   // TODO function
   if (typeof setupResult === 'object') {
-    instance.setupState = setupResult
+    instance.setupState = proxyRefs(setupResult)
   }
 
   finishComponentSetup(instance)
