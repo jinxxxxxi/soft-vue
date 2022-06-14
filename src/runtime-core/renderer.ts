@@ -33,10 +33,41 @@ export function createRenderer(options) {
         break
     }
   }
-  function processElement(n1: any, n2: any, container: any, parentComponent) {
-    mountElement(n2, container, parentComponent)
+  function processElement(n1, n2: any, container: any, parentComponent) {
+    if (!n1) {
+      mountElement(n2, container, parentComponent)
+    } else {
+      patchElement(n1, n2, container)
+    }
   }
 
+  function patchElement(n1, n2, container) {
+    // console.log('n1', n1)
+    // console.log('n2', n2)
+    patchProps(n1, n2)
+  }
+
+  function patchProps(n1, n2) {
+    const newProps = n2.props || {}
+    const oldProps = n1.props || {}
+    if (oldProps !== newProps) {
+      const el = (n2.el = n1.el)
+      for (const key in newProps) {
+        const prevProp = oldProps[key]
+        const nextProp = newProps[key]
+        if (prevProp !== nextProp) {
+          hostPatchProp(el, key, prevProp, nextProp)
+        }
+      }
+
+      // 不在新的props的值  直接删掉
+      for (const key in oldProps) {
+        if (!(key in newProps)) {
+          hostPatchProp(el, key, oldProps[key], null)
+        }
+      }
+    }
+  }
   // 初始化element
   function mountElement(vnode: any, container: any, parentComponent) {
     // 这里是element，它只有自己的vode,没有instance;
@@ -56,7 +87,7 @@ export function createRenderer(options) {
     //hanle props
     for (let key in props) {
       const val = props[key]
-      hostPatchProp(el, key, val)
+      hostPatchProp(el, key, null, val)
     }
     hostInsert(el, container)
   }
