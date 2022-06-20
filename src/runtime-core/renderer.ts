@@ -3,6 +3,7 @@ import { ShapeFlags } from '../shared/ShapeFlags'
 import { Fragment, Text } from './vnode'
 import { createAppAPI } from './createApp'
 import { effect } from '../reactivity/effect'
+import { shouldUpdateComponent } from './ComponentUpdateUtils'
 
 export function createRenderer(options) {
   const {
@@ -163,7 +164,7 @@ export function createRenderer(options) {
         if (prevChild.key !== null) {
           newIndex = keyToNewIndexMap.get(prevChild.key)
         } else {
-          for (let j = s2; j < e2; j++) {
+          for (let j = s2; j <= e2; j++) {
             if (isSameTypeNode(prevChild, c2[j])) {
               newIndex = j
 
@@ -319,18 +320,33 @@ export function createRenderer(options) {
     parentComponent,
     anchor
   ) {
-    mountComponent(n2, container, parentComponent)
+    if (!n1) {
+      mountComponent(n2, container, parentComponent)
+    } else {
+      updateComponent(n1, n2)
+    }
+  }
+
+  function updateComponent(n1, n2) {
+    if (shouldUpdateComponent(n1, n2)) {
+      const instance = (n2.component = n1.component)
+      instance.next = n2
+      instance.update()
+    }
   }
 
   function mountComponent(vnode: any, container, parentComponent: any) {
-    const instance = createComponentInstance(vnode, parentComponent)
+    const instance = (vnode.component = createComponentInstance(
+      vnode,
+      parentComponent
+    ))
 
     setupComponent(instance)
     setupRenderEffect(instance, vnode, container)
   }
 
   function setupRenderEffect(instance: any, initialVNode: any, container) {
-    effect(() => {
+    instance.update = effect(() => {
       effect(() => {
         if (!instance.isMounted) {
           console.log('init')
@@ -345,6 +361,11 @@ export function createRenderer(options) {
           instance.isMounted = true
         } else {
           console.log('update')
+          const { next, vnode } = instance
+          if (next) {
+            next.el = vnode.el
+            updateComponentPreRender(instance, next)
+          }
           const { proxy } = instance
           const subTree = instance.render.call(proxy)
           const prevSubTree = instance.subTree
@@ -354,6 +375,12 @@ export function createRenderer(options) {
         }
       })
     })
+  }
+
+  function updateComponentPreRender(instance, nextVnode) {
+    instance.vnode = nextVnode
+    instance.next = null
+    instance.props = nextVnode.props
   }
   function processFragment(
     n1,

@@ -7,10 +7,11 @@ import { proxyRefs } from '../reactivity'
 
 export function createComponentInstance(vnode, parent) {
   const component = {
-    vnode,
+    vnode, // 老的虚拟节点
     type: vnode.type,
     setupState: {},
     props: {},
+    next: null, // 新的虚拟节点
     name: vnode.type.name,
     slots: {},
     // 这块就是原型链的原理，每个都指向自己的父元素，就能一直向上查找了
