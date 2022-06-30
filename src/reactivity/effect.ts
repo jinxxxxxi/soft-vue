@@ -20,7 +20,7 @@ export class ReactiveEffect {
       // 执行fn 并且将返回值抛出去
       return this._fn()
     }
-    // 应该收集
+    // 应该收集®
     shouldTrack = true
     activeEffect = this
     let r = this._fn()

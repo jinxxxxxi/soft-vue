@@ -10,6 +10,7 @@ export default {
       for (let i = 0; i < 100; i++) {
         console.log('update')
         // 这些操作会被添加到promsie里面去
+        
         count.value = i
       }
       // 这个也会添加到promise里面去，在上面之后
