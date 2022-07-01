@@ -1,5 +1,4 @@
-// import { reactive, isReactive, toRaw, reactiveMap } from "../src/reactive";
-import { reactive, isReactive } from '../index'
+import { reactive, isReactive, toRaw } from '../reactive'
 describe('reactive', () => {
   test('Object', () => {
     const original = { foo: 1 }
@@ -15,23 +14,23 @@ describe('reactive', () => {
     expect(Object.keys(observed)).toEqual(['foo'])
   })
 
-  //   test("nested reactives", () => {
-  //     const original = {
-  //       nested: {
-  //         foo: 1,
-  //       },
-  //       array: [{ bar: 2 }],
-  //     };
-  //     const observed = reactive(original);
-  //     expect(isReactive(observed.nested)).toBe(true);
-  //     expect(isReactive(observed.array)).toBe(true);
-  //     expect(isReactive(observed.array[0])).toBe(true);
-  //   });
+  test('nested reactives', () => {
+    const original = {
+      nested: {
+        foo: 1
+      },
+      array: [{ bar: 2 }]
+    }
+    const observed = reactive(original)
+    expect(isReactive(observed.nested)).toBe(true)
+    expect(isReactive(observed.array)).toBe(true)
+    expect(isReactive(observed.array[0])).toBe(true)
+  })
 
-  //   test("toRaw", () => {
-  //     const original = { foo: 1 };
-  //     const observed = reactive(original);
-  //     expect(toRaw(observed)).toBe(original);
-  //     expect(toRaw(original)).toBe(original);
-  //   });
+  test('toRaw', () => {
+    const original = { foo: 1 }
+    const observed = reactive(original)
+    expect(toRaw(observed)).toBe(original)
+    expect(toRaw(original)).toBe(original)
+  })
 })
