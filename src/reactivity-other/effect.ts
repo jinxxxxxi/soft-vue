@@ -2,7 +2,7 @@ let targetMaps = new Map()
 let activeEffect: any = undefined
 let shouldTrack = false
 
-class ReactiveActive {
+class ReactiveEffect {
   private _fn: any
   public deps: any[] = []
 
@@ -23,7 +23,7 @@ export const isTracking = () => {
   return shouldTrack && activeEffect !== undefined
 }
 export const effect = (fn) => {
-  const _effect = new ReactiveActive(fn)
+  const _effect = new ReactiveEffect(fn)
   _effect.run()
 }
 
