@@ -1,7 +1,6 @@
 import { effect } from '../effect'
 import { reactive } from '../reactive'
-// import { isRef, ref, unRef,proxyRefs } from "../ref";
-import { ref } from '../ref'
+import { isRef, ref, unRef, proxyRefs } from '../ref'
 describe('ref', () => {
   it(' happy path', () => {
     const a = ref(1)
@@ -49,7 +48,7 @@ describe('ref', () => {
     expect(user.age.value).toBe(10)
     expect(proxyUser.age).toBe(10)
     expect(proxyUser.name).toBe('xiaohong')
-    ;(proxyUser as any).age = 20
+    proxyUser.age = 20
     expect(proxyUser.age).toBe(20)
     expect(user.age.value).toBe(20)
 
