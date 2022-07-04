@@ -17,7 +17,7 @@ class ReactiveActive {
   }
 }
 
-const isTracking = () => {
+export const isTracking = () => {
   console.log('zj isTrack', shouldTrack, activeEffect)
 
   return shouldTrack && activeEffect !== undefined
@@ -41,16 +41,24 @@ export const track = (target, key) => {
     dep = new Set()
     depMaps.set(key, dep)
   }
+  trackEffects(dep)
+}
 
+export const trackEffects = (dep) => {
   if (dep.has(activeEffect)) {
     return
   }
   dep.add(activeEffect)
   activeEffect.deps.push(dep)
 }
+
 export const trigger = (target, key) => {
   const depMaps = targetMaps.get(target)
   const dep = depMaps.get(key)
+  triggerEffects(dep)
+}
+
+export const triggerEffects = (dep) => {
   if (dep) {
     for (const effect of dep) {
       console.log('trigger', effect)

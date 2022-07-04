@@ -26,6 +26,9 @@ export const reactive = (target) => {
       return res
     },
     set: function (target, key, value) {
+      if (target[key] === value) {
+        return target[key]
+      }
       const res = Reflect.set(target, key, value)
       trigger(target, key)
       return res
